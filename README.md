@@ -11,7 +11,7 @@ The **University Sports Equipment Booking Management System** is a centralized, 
 
 In a traditional paper-based workflow, students and university staff must manually contact sports officers and record borrowings in physical logbooks—leading to misplaced records, inaccurate stock counts, and difficulty tracking overdue returns. This system provides a unified web platform where students and staff can check real-time equipment availability and submit borrowing requests, while administrators manage inventory, review requests, hand over equipment, and record partial or full returns.
 
-## Group 13 Team Members
+## Team Members
 
 | Registration No. | Student Name | Role |
 | :--- | :--- | :--- |
