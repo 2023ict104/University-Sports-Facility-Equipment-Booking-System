@@ -48,19 +48,30 @@ require_once __DIR__ . '/../includes/header.php';
     <?php if ($message): ?><div class="alert alert-success"><?= e($message) ?></div><?php endif; ?>
     <?php if ($error): ?><div class="alert alert-error"><?= e($error) ?></div><?php endif; ?>
     <form method="post" data-validate="request">
-        <div class="form-group">
-            <label>Select Sports Equipment</label>
-            <select name="equipment_id" required>
-                <option value="">-- Choose Equipment --</option>
-                <?php foreach ($items as $item): ?>
-                    <option value="<?= (int)$item['equipment_id'] ?>"
-                            data-available="<?= (int)$item['available_quantity'] ?>"
-                            <?= $selected_id === (int)$item['equipment_id'] ? 'selected' : '' ?>>
-                        <?= e($item['equipment_name']) ?> (<?= e($item['category_name']) ?> — Avail: <?= (int)$item['available_quantity'] ?>)
-                    </option>
-                <?php endforeach; ?>
-            </select>
-        </div>
+        
+<div class="form-group">
+    <label>Select Sports Equipment</label>
+
+    <input type="text"
+           id="equipmentSearch"
+           placeholder="Type to search equipment..."
+           autocomplete="off"
+           style="margin-bottom: 8px;">
+
+    <select name="equipment_id" id="equipmentSelect" required>
+        <option value="">-- Choose Equipment --</option>
+
+        <?php foreach ($items as $item): ?>
+            <option value="<?= (int)$item['equipment_id'] ?>"
+                    data-available="<?= (int)$item['available_quantity'] ?>"
+                    <?= $selected_id === (int)$item['equipment_id'] ? 'selected' : '' ?>>
+                <?= e($item['equipment_name']) ?>
+                (<?= e($item['category_name']) ?> — Avail: <?= (int)$item['available_quantity'] ?>)
+            </option>
+        <?php endforeach; ?>
+    </select>
+</div>
+
         <div class="form-group">
             <label>Quantity Requested</label>
             <input type="number" name="quantity_requested" min="1" value="1" required>
