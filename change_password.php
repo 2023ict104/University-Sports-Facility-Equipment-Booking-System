@@ -32,6 +32,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $error = 'New password cannot be empty.';
     } elseif (strlen($new_password) < 6) {
         $error = 'New password must be at least 6 characters long.';
+    } elseif (!preg_match('/[^a-zA-Z0-9]/', $new_password)) {
+    $error = 'New password must contain at least one special character.';
     } elseif ($new_password !== $confirm_password) {
         $error = 'New password and confirmation password do not match.';
     } elseif ($new_password === $current_password) {
@@ -75,7 +77,7 @@ require_once __DIR__ . '/includes/header.php';
         </div>
 
         <div class="form-group">
-            <label>New Password (min 6 characters)</label>
+            <label>New Password (min 6 characters and special character)</label>
             <input type="password" name="new_password" required minlength="6" placeholder="Enter your new password">
         </div>
 
