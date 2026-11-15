@@ -57,6 +57,7 @@ require_once __DIR__ . '/../includes/header.php';
         </div>
         <div class="form-group" style="display:flex; align-items:flex-end; gap:10px;">
             <button type="submit" class="btn">Add Category</button>
+            <button type="reset" class="btn btn-secondary">Clear</button>
         </div>
     </form>
 </div>
