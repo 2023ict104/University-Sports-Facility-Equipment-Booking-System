@@ -48,7 +48,7 @@ require_once __DIR__ . '/../includes/header.php';
     <?php if ($error): ?><div class="alert alert-error"><?= e($error) ?></div><?php endif; ?>
     <form method="post" class="form-grid">
         <div class="form-group">
-            <label>Category Name</label>
+            <label>Category Name<span style="color:red;">*</span></label>
             <input type="text" name="category_name" required placeholder="e.g. Hockey">
         </div>
         <div class="form-group">
