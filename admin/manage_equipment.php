@@ -62,7 +62,7 @@ require_once __DIR__ . '/../includes/header.php';
     <?php if ($error): ?><div class="alert alert-error"><?= e($error) ?></div><?php endif; ?>
     <form method="post" class="form-grid">
         <div class="form-group">
-            <label>Category</label>
+            <label>Category<span style="color: #dc2626;">*</span></label>
             <select name="category_id" required>
                 <?php foreach ($categories as $c): ?>
                     <option value="<?= (int)$c['category_id'] ?>"><?= e($c['category_name']) ?></option>
