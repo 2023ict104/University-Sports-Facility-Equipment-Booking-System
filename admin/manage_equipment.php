@@ -70,8 +70,8 @@ require_once __DIR__ . '/../includes/header.php';
             </select>
         </div>
         <div class="form-group">
-            <label>Equipment Name</label>
-            <input type="text" name="equipment_name" required maxlength="100" placeholder="e.g. Leather Cricket Ball"> 
+            <label>Equipment Name<span style="color: #dc2626;">*</span></label>
+            <input type="text" name="equipment_name" required maxlength="100" placeholder="e.g. Leather Cricket Ball">
         </div>
         <div class="form-group">
             <label>Total Quantity</label>
