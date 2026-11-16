@@ -90,7 +90,7 @@ require_once __DIR__ . '/../includes/header.php';
             <label>Description</label>
             <input type="text" name="description">
         </div>
-        <div class="form-group" style="display:flex; align-items:flex-end;">
+        <div class="form-group" style="display:flex; align-items:flex-end; gap:10px;">
             <button type="submit" class="btn">Save Equipment</button>
         </div>
     </form>
