@@ -121,4 +121,36 @@ require_once __DIR__ . '/../includes/header.php';
         </div>
     </form>
 </div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    const form = document.querySelector('form');
+    if (!form) return;
+
+    let isChanged = false;
+    let isSubmitting = false;
+
+    form.addEventListener('input', () => { isChanged = true; });
+    form.addEventListener('change', () => { isChanged = true; });
+    form.addEventListener('submit', () => { isSubmitting = true; });
+
+    document.querySelectorAll('a').forEach(link => {
+        link.addEventListener('click', function (e) {
+            if (isChanged && !isSubmitting) {
+                if (!confirm('You have unsaved changes. Are you sure you want to leave without saving?')) {
+                    e.preventDefault();
+                }
+            }
+        });
+    });
+
+    window.addEventListener('beforeunload', function (e) {
+        if (isChanged && !isSubmitting) {
+            e.preventDefault();
+            e.returnValue = '';
+        }
+    });
+});
+</script>
+
 <?php require_once __DIR__ . '/../includes/footer.php'; ?>
