@@ -71,7 +71,7 @@ require_once __DIR__ . '/../includes/header.php';
         </div>
         <div class="form-group">
             <label>Equipment Name</label>
-            <input type="text" name="equipment_name" required>
+            <input type="text" name="equipment_name" required maxlength="100" placeholder="e.g. Leather Cricket Ball"> 
         </div>
         <div class="form-group">
             <label>Total Quantity</label>
