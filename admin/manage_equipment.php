@@ -62,7 +62,7 @@ require_once __DIR__ . '/../includes/header.php';
     <?php if ($error): ?><div class="alert alert-error"><?= e($error) ?></div><?php endif; ?>
     <form method="post" class="form-grid">
         <div class="form-group">
-            <label>Category</label>
+            <label>Category<span style="color: #dc2626;">*</span></label> 
             <select name="category_id" required>
                 <?php foreach ($categories as $c): ?>
                     <option value="<?= (int)$c['category_id'] ?>"><?= e($c['category_name']) ?></option>
@@ -71,7 +71,7 @@ require_once __DIR__ . '/../includes/header.php';
         </div>
         <div class="form-group">
             <label>Equipment Name<span style="color: #dc2626;">*</span></label>
-            <input type="text" name="equipment_name" required>
+            <input type="text" name="equipment_name" required maxlength="100" placeholder="e.g. Leather Cricket Ball">
         </div>
         <div class="form-group">
             <label>Total Quantity</label>
@@ -86,12 +86,10 @@ require_once __DIR__ . '/../includes/header.php';
                 <option value="Needs Repair">Needs Repair</option>
             </select>
         </div>
-        <div class="form-group">
-            <label>Description</label>
-            <input type="text" name="description">
-        </div>
-        <div class="form-group" style="display:flex; align-items:flex-end;">
+        
+        <div class="form-group" style="display:flex; align-items:flex-end; gap:10px;">
             <button type="submit" class="btn">Save Equipment</button>
+            <button type="reset" class="btn btn-secondary">Clear</button>
         </div>
     </form>
 </div>
