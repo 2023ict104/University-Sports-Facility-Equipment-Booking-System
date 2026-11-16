@@ -70,7 +70,7 @@ require_once __DIR__ . '/../includes/header.php';
             </select>
         </div>
         <div class="form-group">
-            <label>Equipment Name</label>
+            <label>Equipment Name<span style="color: #dc2626;">*</span></label>
             <input type="text" name="equipment_name" required>
         </div>
         <div class="form-group">
