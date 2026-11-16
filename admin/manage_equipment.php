@@ -86,10 +86,7 @@ require_once __DIR__ . '/../includes/header.php';
                 <option value="Needs Repair">Needs Repair</option>
             </select>
         </div>
-        <div class="form-group">
-            <label>Description</label>
-            <input type="text" name="description">
-        </div>
+        
         <div class="form-group" style="display:flex; align-items:flex-end; gap:10px;">
             <button type="submit" class="btn">Save Equipment</button>
             <button type="reset" class="btn btn-secondary">Clear</button>
