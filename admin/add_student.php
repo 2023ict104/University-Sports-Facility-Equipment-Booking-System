@@ -5,125 +5,85 @@ requireAdmin();
 
 $message = '';
 $error   = '';
-$uid     = (int)($_GET['id'] ?? $_POST['user_id'] ?? 0);
-
-if (!$uid) {
-    header("Location: /sports_equipment_system/admin/manage_users.php");
-    exit;
-}
-
-$stmt = $pdo->prepare("SELECT * FROM users WHERE user_id = ?");
-$stmt->execute([$uid]);
-$user = $stmt->fetch();
-
-if (!$user) {
-    die("User not found.");
-}
-
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $student_id = trim($_POST['student_id'] ?? '');
     $full_name  = trim($_POST['full_name'] ?? '');
     $email      = trim($_POST['email'] ?? '');
-    $role       = $_POST['role'] ?? $user['role'];
-    $status     = $_POST['status'] ?? $user['status'];
-    $student_id = trim($_POST['student_id'] ?? '');
-    $password   = $_POST['new_password'] ?? '';
+    $password   = $_POST['password'] ?? '';
 
-    if ($role === 'student' && empty($student_id)) {
-        $error = 'Student ID is required for student accounts.';
-    } elseif (empty($full_name) || empty($email)) {
-        $error = 'Full name and email address are required.';
+    if (!$student_id || !$full_name || !$email || !$password) {
+        $error = 'All fields are required to create a student account.';
     } else {
-        
-        $chk = $pdo->prepare("SELECT user_id FROM users WHERE email = ? AND user_id != ?");
-        $chk->execute([$email, $uid]);
-        if ($chk->fetch()) {
-            $error = 'Email address is already in use by another account.';
-        } else {
-            if ($role !== 'student') {
-                $student_id = null;
-            }
-            if (!empty($password)) {
-                $hash = password_hash($password, PASSWORD_DEFAULT);
-                $upd = $pdo->prepare("UPDATE users SET full_name = ?, email = ?, role = ?, status = ?, student_id = ?, password_hash = ? WHERE user_id = ?");
-                $upd->execute([$full_name, $email, $role, $status, $student_id, $hash, $uid]);
-            } else {
-                $upd = $pdo->prepare("UPDATE users SET full_name = ?, email = ?, role = ?, status = ?, student_id = ? WHERE user_id = ?");
-                $upd->execute([$full_name, $email, $role, $status, $student_id, $uid]);
-            }
-            $message = 'User account updated successfully!';
-            // Refresh record
-            $stmt->execute([$uid]);
-            $user = $stmt->fetch();
+        try {
+            $hash = password_hash($password, PASSWORD_DEFAULT);
+            $stmt = $pdo->prepare("INSERT INTO users (student_id, full_name, email, password_hash, role, status) VALUES (?, ?, ?, ?, 'student', 'active')");
+            $stmt->execute([$student_id, $full_name, $email, $hash]);
+            $message = "Student account for {$full_name} ({$student_id}) created successfully.";
+        } catch (PDOException $e) {
+            $error = 'Duplicate Student ID or Email address.';
         }
     }
 }
-
-$page_title = 'Edit User Account';
+$page_title = 'Add Student Account';
 require_once __DIR__ . '/../includes/header.php';
 ?>
-<div class="card" style="max-width: 640px; margin: 0 auto;">
-    
-    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1.5rem; padding-bottom:1rem; border-bottom:2px solid #f1f5f9;">
-        <div style="display:flex; align-items:center; gap:0.75rem;">
-            <span style="display:inline-flex; align-items:center; justify-content:center; background:#e0f2fe; color:#0369a1; font-weight:700; font-size:0.85rem; padding:0.3rem 0.65rem; border-radius:9999px;">
-                #<?= (int)$user['user_id'] ?>
-            </span>
-            <h2 style="margin:0; font-size:1.5rem; font-weight:700; color:#1e293b; display:flex; align-items:center; gap:0.5rem;">
-                <svg style="width:24px; height:24px; color:#0284c7;" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg>
-                Edit User Account
-            </h2>
-        </div>
-        <a href="/sports_equipment_system/admin/manage_users.php" class="btn btn-sm btn-secondary">&larr; Back to Users</a>
-    </div>
-
+<div class="card" style="max-width: 580px;">
+    <h2>Add Student Account</h2>
     <?php if ($message): ?><div class="alert alert-success"><?= e($message) ?></div><?php endif; ?>
     <?php if ($error): ?><div class="alert alert-error"><?= e($error) ?></div><?php endif; ?>
-
     <form method="post">
-        <input type="hidden" name="user_id" value="<?= (int)$user['user_id'] ?>">
-
+        <div class="form-group">
+            <label>University Student Registration No (e.g. 2023/ICT/001)</label>
+            <input type="text" name="student_id" required>
+        </div>
         <div class="form-group">
             <label>Full Name</label>
-            <input type="text" name="full_name" value="<?= e($user['full_name']) ?>" required>
+            <input type="text" name="full_name" required>
         </div>
-
         <div class="form-group">
             <label>University Email</label>
-            <input type="email" name="email" value="<?= e($user['email']) ?>" required>
+            <input type="email" name="email" required>
         </div>
-
-        <div class="form-grid">
-            <div class="form-group">
-                <label>System Role</label>
-                <select name="role" <?= $user['role'] === 'admin' && (int)$user['user_id'] === (int)$_SESSION['user_id'] ? 'disabled' : '' ?>>
-                    <option value="student" <?= $user['role'] === 'student' ? 'selected' : '' ?>>Student</option>
-                    <option value="staff" <?= $user['role'] === 'staff' ? 'selected' : '' ?>>Staff</option>
-                    <option value="admin" <?= $user['role'] === 'admin' ? 'selected' : '' ?>>Administrator</option>
-                </select>
-            </div>
-            <div class="form-group">
-                <label>Account Status</label>
-                <select name="status" <?= (int)$user['user_id'] === (int)$_SESSION['user_id'] ? 'disabled' : '' ?>>
-                    <option value="active" <?= $user['status'] === 'active' ? 'selected' : '' ?>>Active</option>
-                    <option value="inactive" <?= $user['status'] === 'inactive' ? 'selected' : '' ?>>Inactive</option>
-                </select>
+        <div class="form-group">
+            <label>Initial Password</label>
+            <div style="position: relative; display: flex; align-items: center;">
+                <input type="password" name="password" id="password" required style="width: 100%; padding-right: 40px;">
+                <button type="button" id="togglePassword" style="position: absolute; right: 10px; background: none; border: none; cursor: pointer; color: #64748b; display: flex; align-items: center; justify-content: center; padding: 0;" title="Show/Hide Password">
+                    
+                    <svg id="eyeIcon" style="width: 20px; height: 20px;" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
+                    </svg>
+                </button>
             </div>
         </div>
-
-        <div class="form-group">
-            <label>Student Registration ID (e.g. 2023/ICT/001)</label>
-            <input type="text" name="student_id" value="<?= e($user['student_id'] ?? '') ?>" placeholder="Leave blank for Staff and Administrators">
-        </div>
-
-        <div class="form-group">
-            <label>Reset Password (leave blank to keep current password)</label>
-            <input type="password" name="new_password" placeholder="Enter new password if resetting">
-        </div>
-
-        <div style="display:flex; justify-content:flex-end; gap:0.6rem; margin-top:1.5rem; padding-top:1rem; border-top:1px solid #f1f5f9;">
-            <a href="/sports_equipment_system/admin/manage_users.php" class="btn btn-secondary">Cancel</a>
-            <button type="submit" class="btn btn-success">Update User Account</button>
-        </div>
+        <button type="submit" class="btn">Create Student Account</button>
     </form>
 </div>
+
+
+<script>
+    const togglePassword = document.querySelector('#togglePassword');
+    const password = document.querySelector('#password');
+    const eyeIcon = document.querySelector('#eyeIcon');
+
+    togglePassword.addEventListener('click', function () {
+        
+        const type = password.getAttribute('type') === 'password' ? 'text' : 'password';
+        password.setAttribute('type', type);
+
+        
+        if (type === 'text') {
+            eyeIcon.innerHTML = `
+                <path stroke-linecap="round" stroke-linejoin="round" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.542-7a10.05 10.05 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.542 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21"></path>
+            `;
+        } else {
+            eyeIcon.innerHTML = `
+                <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                <path stroke-linecap="round" stroke-linejoin="round" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
+            `;
+        }
+    });
+</script>
+
 <?php require_once __DIR__ . '/../includes/footer.php'; ?>
